@@ -1,4 +1,4 @@
-# 🚀 BizInsight AI
+#  BizInsight AI
 
 An intelligent business assistant platform that helps small businesses understand, analyze, and forecast their data with the help of Machine Learning, NLP, and an AI-powered chatbot.
 
