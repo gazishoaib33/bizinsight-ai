@@ -18,7 +18,7 @@ An intelligent business assistant platform that helps small businesses understan
 - VS Code + Jupyter Notebook
 
 ## 📸 Screenshots
-_Add screenshots after you run your app!_
+![image](https://github.com/user-attachments/assets/65acd748-a4c8-4d14-b002-d3af6d0dcfc2)
 
 ## 🚀 Run Locally
 ```bash
