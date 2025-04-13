@@ -52,3 +52,35 @@ if uploaded_file:
             st.error(f"❌ Forecasting failed: {e}")
     else:
         st.error("CSV must contain at least 'Order Date' and 'Sales' columns.")
+from textblob import TextBlob
+
+st.header("🗣️ Customer Review Analysis")
+
+review_file = st.file_uploader("Upload customer reviews (CSV with a 'Review' column)", type=["csv"], key="reviews")
+if review_file:
+    reviews_df = pd.read_csv(review_file)
+
+    if 'Review' not in reviews_df.columns:
+        st.error("CSV must contain a 'Review' column.")
+    else:
+        st.success("Review file uploaded!")
+
+        # Sentiment Analysis
+        def get_sentiment(text):
+            return TextBlob(str(text)).sentiment.polarity
+
+        reviews_df['Sentiment Score'] = reviews_df['Review'].apply(get_sentiment)
+        reviews_df['Sentiment Label'] = reviews_df['Sentiment Score'].apply(
+            lambda x: 'Positive' if x > 0 else ('Negative' if x < 0 else 'Neutral'))
+
+        sentiment_counts = reviews_df['Sentiment Label'].value_counts()
+
+        st.subheader("📊 Sentiment Distribution")
+        st.bar_chart(sentiment_counts)
+
+        st.subheader("🔍 Sample Reviews with Sentiment")
+        st.dataframe(reviews_df[['Review', 'Sentiment Label', 'Sentiment Score']].head(10))
+
+        st.subheader("📈 Review Stats")
+        reviews_df['Length'] = reviews_df['Review'].apply(lambda x: len(str(x).split()))
+        st.metric("Average Words per Review", round(reviews_df['Length'].mean(), 2))
