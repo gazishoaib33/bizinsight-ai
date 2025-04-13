@@ -1,28 +1,59 @@
-#  BizInsight AI
+# 🚀 BizInsight AI – Business Intelligence Assistant
 
-An intelligent business assistant platform that helps small businesses understand, analyze, and forecast their data with the help of Machine Learning, NLP, and an AI-powered chatbot.
+**BizInsight AI** is a smart, interactive dashboard that helps businesses uncover insights from their data using machine learning, NLP, and real-time market trends. It’s designed for non-technical users to easily upload data and get actionable insights — no code required.
 
-##  Features
--  Upload your business data (CSV/Excel)
--  Interactive dashboards (sales, top products, regions)
--  Sales forecasting (coming soon)
--  Customer review analysis with NLP (coming soon)
--  Market trend insights via APIs (coming soon)
--  AI chatbot assistant for business questions (coming soon)
+---
 
-## Tech Stack
-- Python, Pandas, Streamlit, Plotly
-- Scikit-learn, NLTK (for NLP)
-- Google Trends API (PyTrends)
-- Chatbot: LangChain / Rasa (planned)
-- VS Code + Jupyter Notebook
+## 🎯 Project Aim
+
+> **To empower businesses with intelligent insights from sales and customer data using AI-powered dashboards and real-time market signals.**
+
+---
+
+## 🔍 Key Features
+
+- 📁 Upload CSV sales and customer data
+- 📈 Visualize monthly sales trends and top-selling products
+- 🔮 Forecast future sales using Prophet (Time Series ML)
+- 🧠 Analyze customer reviews with sentiment detection
+- ☁️ Generate Word Clouds from customer feedback
+- 🌐 Google Trends integration for external market insights
+- 🧠 Auto-detects relevant columns from uploaded files
+- 🛠️ Fully interactive using [Streamlit](https://streamlit.io)
+
+---
+
+## 💡 Use Cases
+
+- A shop owner wants to know top-performing products and future sales
+- A marketing team checks what’s trending before launching a campaign
+- A customer service team wants sentiment feedback from reviews
+
+---
+
+## 🛠 Tech Stack
+
+| Area              | Tools Used                              |
+|-------------------|------------------------------------------|
+| 📊 Dashboard      | Streamlit, Plotly, Pandas                |
+| 🔮 Forecasting     | Prophet                                  |
+| 🧠 NLP Sentiment   | TextBlob, WordCloud                     |
+| 🌍 Market Trends   | pytrends (Google Trends API)            |
+| 📁 Data Handling   | CSV Upload + Auto Column Mapping         |
+
+---
+
 
 ## Screenshots
 ![image](https://github.com/user-attachments/assets/65acd748-a4c8-4d14-b002-d3af6d0dcfc2)
 
-## Run Locally
-```bash
-git clone https://github.com/gazishoaib33/bizinsight-ai.git
-cd bizinsight-ai
-pip install -r requirements.txt
-streamlit run app.py
+
+## 📦 How to Run
+
+1. Clone this repo:
+   ```bash
+   git clone https://github.com/yourusername/bizinsight-ai.git
+   cd bizinsight-ai
+
+
+
