@@ -179,3 +179,53 @@ if keyword:
             st.warning("No data returned. Try another keyword.")
     except Exception as e:
         st.error(f"Failed to fetch Google Trends: {e}")
+# =============================
+# 🤖 GPT AI Assistant (OpenAI v1.0+)
+# =============================
+
+from openai import OpenAI
+
+st.header("🤖 GPT AI Assistant")
+
+# Load your API key securely
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])  # or use: OpenAI(api_key="sk-...")
+
+user_input = st.chat_input("Ask me anything about your uploaded business data...")
+
+if user_input and uploaded_file:
+    with st.spinner("🤖 Thinking..."):
+
+        # Build context from your uploaded data
+        try:
+            total_sales = df[sales_col].sum()
+            top_product = df.groupby(product_col)[sales_col].sum().idxmax()
+            total_orders = len(df)
+            date_min = df[order_date_col].min().date()
+            date_max = df[order_date_col].max().date()
+
+            context = f"""
+            You are a helpful AI assistant for business analysis.
+            You are helping the user explore their uploaded sales data.
+
+            - Total Sales: ${total_sales:,.2f}
+            - Top Product: {top_product}
+            - Total Orders: {total_orders}
+            - Date Range: {date_min} to {date_max}
+
+            Answer questions using the uploaded dataset. If unsure, say so.
+            """
+
+            # Call OpenAI Chat Completion (v1.0+)
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": context},
+                    {"role": "user", "content": user_input}
+                ]
+            )
+
+            reply = response.choices[0].message.content
+            st.chat_message("assistant").markdown(reply)
+
+        except Exception as e:
+            st.error(f"💥 GPT Assistant Error: {e}")
