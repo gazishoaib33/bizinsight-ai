@@ -1,59 +1,86 @@
-# 🚀 BizInsight AI – Business Intelligence Assistant
+# BizInsight AI – Your Smart Business Dashboard 📊💡
 
-**BizInsight AI** is a smart, interactive dashboard that helps businesses uncover insights from their data using machine learning, NLP, and real-time market trends. It’s designed for non-technical users to easily upload data and get actionable insights — no code required.
+**BizInsight AI** is a project I created to help businesses make smarter decisions by combining data analysis, forecasting, customer feedback, and real-time market signals — all in one place.
 
----
-
-## 🎯 Project Aim
-
-> **To empower businesses with intelligent insights from sales and customer data using AI-powered dashboards and real-time market signals.**
+Whether you're running a small business or just exploring your sales data, this app lets you:
 
 ---
 
-## 🔍 Key Features
+## 🔍 What It Can Do
 
-- 📁 Upload CSV sales and customer data
-- 📈 Visualize monthly sales trends and top-selling products
-- 🔮 Forecast future sales using Prophet (Time Series ML)
-- 🧠 Analyze customer reviews with sentiment detection
-- ☁️ Generate Word Clouds from customer feedback
-- 🌐 Google Trends integration for external market insights
-- 🧠 Auto-detects relevant columns from uploaded files
-- 🛠️ Fully interactive using [Streamlit](https://streamlit.io)
+### 🧾 Upload Your Sales Data (CSV)
+Just drag and drop your file — the app figures out columns like dates, sales, and products automatically.
+
+### 📈 See Sales Trends
+- Monthly revenue trend (visualized)
+- Top 10 best-selling products
+- Summary of how your sales changed over time
+
+### 🔮 Get Future Predictions
+- 6-month sales forecast using Facebook Prophet
+- Easily see what’s coming up next in your business
+
+### 💬 Understand Customer Sentiment
+- Upload reviews → get instant sentiment scores
+- Breakdown: Positive, Neutral, Negative
+- Word cloud to see what customers talk about most
+
+### 🌍 Watch the Market in Real-Time
+- Track Google Trends for your products
+- See what related terms people are searching for
+- News sentiment analysis from real headlines
+
+### 🧠 Product Growth Advisor
+This is the fun part. For your top products, BizInsight:
+- Checks their trend score
+- Analyzes live news
+- And gives smart suggestions like:
+  > "Run a promo — trends are rising and news is positive!"
 
 ---
 
-## 💡 Use Cases
-
-- A shop owner wants to know top-performing products and future sales
-- A marketing team checks what’s trending before launching a campaign
-- A customer service team wants sentiment feedback from reviews
-
----
-
-## 🛠 Tech Stack
-
-| Area              | Tools Used                              |
-|-------------------|------------------------------------------|
-| 📊 Dashboard      | Streamlit, Plotly, Pandas                |
-| 🔮 Forecasting     | Prophet                                  |
-| 🧠 NLP Sentiment   | TextBlob, WordCloud                     |
-| 🌍 Market Trends   | pytrends (Google Trends API)            |
-| 📁 Data Handling   | CSV Upload + Auto Column Mapping         |
+## 💻 Built With
+- Python & Streamlit
+- Prophet for forecasting
+- PyTrends for trend tracking
+- NewsAPI for real-time headlines
+- TextBlob for sentiment analysis
 
 ---
 
+## 🚀 How to Run It
 
-## Screenshots
-![image](https://github.com/user-attachments/assets/65acd748-a4c8-4d14-b002-d3af6d0dcfc2)
+1. **Install required packages:**
+```bash
+pip install -r requirements.txt
+```
 
+2. **Add your NewsAPI key to secrets:**
+```
+📁 .streamlit/secrets.toml
+```
+```toml
+NEWSAPI_KEY = "your_api_key_here"
+```
 
-## 📦 How to Run
+3. **Run the app:**
+```bash
+streamlit run app.py
+```
 
-1. Clone this repo:
-   ```bash
-   git clone https://github.com/yourusername/bizinsight-ai.git
-   cd bizinsight-ai
+---
 
+## 🙋‍♂️ Why I Built This
+I wanted to build something that brings data science and real-world business together. Something that’s useful, visual, and feels alive with data.
 
+If you're into data, BI, or just love smart dashboards — this one’s for you.
 
+---
+
+## 👋 Let's Connect
+Built by **Gazi Shoaib**
+
+- GitHub: [@gazishoaib33](https://github.com/gazishoaib33)
+- LinkedIn: [Gazi Shoaib](https://www.linkedin.com/in/gazishoaib33)
+
+Feel free to fork, use, or suggest ideas!
