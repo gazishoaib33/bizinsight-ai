@@ -70,7 +70,7 @@ streamlit run app.py
 
 ---
 
-## 🙋‍♂ Why I Built This
+##  Why I Built This
 I wanted to build something that brings data science and real-world business together. Something that’s useful, visual, and feels alive with data.
 
 If you're into data, BI, or just love smart dashboards — this one’s for you.
