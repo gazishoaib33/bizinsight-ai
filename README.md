@@ -1,4 +1,4 @@
-# BizInsight AI – A Smart Business Dashboard 📊💡
+# BizInsight AI – A Smart Business Dashboard 
 
 **BizInsight AI** is a project I created to help businesses make smarter decisions by combining data analysis, forecasting, customer feedback, and real-time market signals — all in one place.
 
@@ -6,31 +6,31 @@ Whether you're running a small business or just exploring your sales data, this 
 
 ---
 
-## 🔍 What It Can Do
+##  What It Can Do
 
-### 🧾 Upload Your Sales Data (CSV)
+###  Upload Your Sales Data (CSV)
 Just drag and drop your file — the app figures out columns like dates, sales, and products automatically.
 
-### 📈 See Sales Trends
+###  See Sales Trends
 - Monthly revenue trend (visualized)
 - Top 10 best-selling products
 - Summary of how your sales changed over time
 
-### 🔮 Get Future Predictions
+###  Get Future Predictions
 - 6-month sales forecast using Facebook Prophet
 - Easily see what’s coming up next in your business
 
-### 💬 Understand Customer Sentiment
+###  Understand Customer Sentiment
 - Upload reviews → get instant sentiment scores
 - Breakdown: Positive, Neutral, Negative
 - Word cloud to see what customers talk about most
 
-### 🌍 Watch the Market in Real-Time
+###  Watch the Market in Real-Time
 - Track Google Trends for your products
 - See what related terms people are searching for
 - News sentiment analysis from real headlines
 
-### 🧠 Product Growth Advisor
+###  Product Growth Advisor
 This is the fun part. For your top products, BizInsight:
 - Checks their trend score
 - Analyzes live news
@@ -39,7 +39,7 @@ This is the fun part. For your top products, BizInsight:
 
 ---
 
-## 💻 Built With
+##  Built With
 - Python & Streamlit
 - Prophet for forecasting
 - PyTrends for trend tracking
@@ -48,7 +48,7 @@ This is the fun part. For your top products, BizInsight:
 
 ---
 
-## 🚀 How to Run It
+##  How to Run It
 
 1. **Install required packages:**
 ```bash
@@ -70,14 +70,14 @@ streamlit run app.py
 
 ---
 
-## 🙋‍♂️ Why I Built This
+## 🙋‍♂ Why I Built This
 I wanted to build something that brings data science and real-world business together. Something that’s useful, visual, and feels alive with data.
 
 If you're into data, BI, or just love smart dashboards — this one’s for you.
 
 ---
 
-## 👋 Let's Connect
+##  Let's Connect
 Built by **Gazi Shoaib**
 
 - GitHub: [@gazishoaib33](https://github.com/gazishoaib33)
