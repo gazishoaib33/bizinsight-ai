@@ -81,6 +81,6 @@ If you're into data, BI, or just love smart dashboards — this one’s for you.
 Built by **Gazi Shoaib**
 
 - GitHub: [@gazishoaib33](https://github.com/gazishoaib33)
-- LinkedIn: [Gazi Shoaib](https://www.linkedin.com/in/gazishoaib33)
+- LinkedIn: [Gazi Shoaib](https://www.linkedin.com/in/gazi-shoaib-1291531a4/)
 
 Feel free to fork, use, or suggest ideas!
