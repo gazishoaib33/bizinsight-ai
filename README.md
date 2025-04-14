@@ -1,4 +1,4 @@
-# BizInsight AI – Your Smart Business Dashboard 📊💡
+# BizInsight AI – A Smart Business Dashboard 📊💡
 
 **BizInsight AI** is a project I created to help businesses make smarter decisions by combining data analysis, forecasting, customer feedback, and real-time market signals — all in one place.
 
