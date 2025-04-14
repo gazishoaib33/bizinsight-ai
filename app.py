@@ -5,8 +5,9 @@ from prophet import Prophet
 from textblob import TextBlob
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
-from pytrends.request import TrendReq
 import difflib
+from newsapi import NewsApiClient
+from pytrends.request import TrendReq
 
 st.set_page_config(page_title="BizInsight AI", layout="wide")
 st.title("📊 BizInsight AI – Business Intelligence Dashboard")
@@ -20,8 +21,8 @@ uploaded_file = st.file_uploader("Upload your business data (CSV only)", type=["
 if uploaded_file:
     try:
         df = pd.read_csv(uploaded_file, encoding='ISO-8859-1')
-        st.success("✅ File uploaded successfully!")
 
+        # Define column matching function
         def auto_match_column(possible_names, df_cols):
             for name in possible_names:
                 match = difflib.get_close_matches(name, df_cols, n=1, cutoff=0.7)
@@ -29,17 +30,44 @@ if uploaded_file:
                     return match[0]
             return None
 
+        # Clean and convert sales column
+        sales_col_raw = auto_match_column(["Sales", "Revenue", "Amount", "Total"], df.columns)
+        if sales_col_raw:
+            df[sales_col_raw] = pd.to_numeric(
+                df[sales_col_raw].astype(str).str.replace(',', '').str.replace('$', ''), errors='coerce')
+
+        st.success("✅ File uploaded successfully!")
+
         order_date_col = auto_match_column(["Order Date", "Date", "order_date"], df.columns)
         sales_col = auto_match_column(["Sales", "Revenue", "Amount", "Total"], df.columns)
         product_col = auto_match_column(["Product Name", "Item", "Product"], df.columns)
 
-        st.subheader("🧠 Auto Column Mapping")
-        order_date_col = st.selectbox("Date Column", df.columns, index=df.columns.get_loc(order_date_col) if order_date_col else 0)
-        sales_col = st.selectbox("Sales Column", df.columns, index=df.columns.get_loc(sales_col) if sales_col else 0)
-        product_col = st.selectbox("Product Column", df.columns, index=df.columns.get_loc(product_col) if product_col else 0)
+        if not order_date_col:
+            order_date_col = st.selectbox("Select Date Column", df.columns)
+        if not sales_col:
+            numeric_cols = df.select_dtypes(include='number').columns.tolist()
+            if numeric_cols:
+                sales_col = st.selectbox("Select Sales Column", numeric_cols)
+            else:
+                st.error("❌ No numeric columns found for sales.")
+                st.stop()
+        if not product_col:
+            product_col = st.selectbox("Select Product Column", df.columns)
 
-        df[order_date_col] = pd.to_datetime(df[order_date_col], errors='coerce')
+        try:
+            df[order_date_col] = pd.to_datetime(df[order_date_col], errors='coerce', infer_datetime_format=True)
+        except Exception as e:
+            st.error(f"❌ Failed to parse dates. Error: {e}")
+            st.stop()
+
+        if df[sales_col].isna().all():
+            st.error("❌ Sales column could not be converted to numbers. Please check your file format.")
+            st.stop()
+
         df = df.dropna(subset=[order_date_col, sales_col])
+        if df.empty:
+            st.error("⚠️ No valid rows after cleaning. Please check your data.")
+            st.stop()
 
         st.subheader("📋 Data Preview")
         st.dataframe(df.head(10))
@@ -59,7 +87,7 @@ if uploaded_file:
         try:
             prophet_df = monthly_sales.rename(columns={order_date_col: "ds", sales_col: "y"}).dropna()
             if prophet_df.shape[0] < 2:
-                st.error("📉 Not enough data to forecast.")
+                st.warning("⚠️ Not enough data to build a forecast.")
             else:
                 model = Prophet()
                 model.fit(prophet_df)
@@ -89,67 +117,69 @@ if uploaded_file:
             trend = "up 📈" if diff > 0 else "down 📉"
             st.markdown(f"**Last month’s sales ({latest_month_str})** were **${last_sales:,.2f}**, {trend} by **{abs(perc):.1f}%** from previous month.")
 
+        # =============================
+        # 📈 Product Growth Advisor
+        # =============================
+        st.header("📈 Product Growth Advisor")
+        top_n = 3
+        top_products = df.groupby(product_col)[sales_col].sum().nlargest(top_n).reset_index()
+
+        pytrends = TrendReq(hl='en-US', tz=360)
+        newsapi = NewsApiClient(api_key="8b3e20485b4943d190d06f67eee4df6b")  # Replace with your API key
+
+        for i, row in top_products.iterrows():
+            product = row[product_col]
+            product_sales = row[sales_col]
+
+            st.subheader(f"🧪 Product: **{product}**")
+            st.markdown(f"- 💰 **Current Sales:** ${product_sales:,.2f}")
+
+            try:
+                pytrends.build_payload([product], cat=0, timeframe='today 3-m', geo='', gprop='')
+                trend_df = pytrends.interest_over_time()
+                trend_score = trend_df[product].mean() if not trend_df.empty else 0
+                trend_change = trend_df[product].pct_change().mean() * 100 if not trend_df.empty else 0
+
+                st.markdown(f"- 🌍 **Google Trend:** Avg Score: {trend_score:.1f}, Change: {trend_change:+.1f}%")
+
+                related = pytrends.related_queries()
+                related_top = related.get(product, {}).get('top')
+                if related_top is not None and not related_top.empty:
+                    top_keywords = ', '.join(related_top['query'].head(3))
+                    st.markdown(f"- 🔁 **Related Searches:** {top_keywords}")
+                else:
+                    st.markdown("- 🔁 **Related Searches:** Not found")
+
+            except Exception as e:
+                st.warning(f"Google Trends failed: {e}")
+
+            try:
+                news = newsapi.get_everything(q=product, language='en', sort_by='relevancy', page_size=5)
+                if news['articles']:
+                    headlines = [article['title'] for article in news['articles']]
+                    sentiments = [TextBlob(title).sentiment.polarity for title in headlines]
+                    avg_sentiment = sum(sentiments) / len(sentiments)
+                    sentiment_label = 'Positive ✅' if avg_sentiment > 0 else 'Negative ❌' if avg_sentiment < 0 else 'Neutral ⚪'
+                    st.markdown(f"- 📰 **News Sentiment:** {sentiment_label} ({avg_sentiment:.2f})")
+                else:
+                    avg_sentiment = 0
+                    st.markdown("- 📰 **News Sentiment:** No recent news found")
+
+            except Exception as e:
+                avg_sentiment = 0
+                st.warning(f"News API failed: {e}")
+
+            if trend_change > 10 and avg_sentiment > 0:
+                suggestion = f"📢 Consider launching a **promotion or ad campaign** — interest is growing and sentiment is positive!"
+            elif trend_change < -10:
+                suggestion = f"📉 Trend is declining. Consider repositioning or bundling this product with a high-performer."
+            elif avg_sentiment < 0:
+                suggestion = f"⚠️ Reviews/news are negative. Investigate customer concerns and improve perception."
+            else:
+                suggestion = f"📊 Stable trend — explore content marketing using keywords like **{top_keywords if 'top_keywords' in locals() else product}**."
+
+            st.success(f"🧠 Suggestion: {suggestion}")
+            st.markdown("---")
+
     except Exception as e:
         st.error(f"Failed to read business file: {e}")
-
-# =============================
-# CUSTOMER REVIEW ANALYSIS
-# =============================
-st.header("🗣️ Customer Review Analysis")
-review_file = st.file_uploader("Upload customer reviews (CSV with 'Review' column)", type=["csv"], key="reviews")
-if review_file:
-    try:
-        reviews_df = pd.read_csv(review_file)
-        possible_review_cols = ['Review', 'review', 'reviews', 'review_body', 'ReviewText']
-        for col in reviews_df.columns:
-            if col.strip() in possible_review_cols:
-                reviews_df.rename(columns={col: 'Review'}, inplace=True)
-                break
-
-        if 'Review' not in reviews_df.columns:
-            st.error("CSV must contain a 'Review' column.")
-        else:
-            st.success("Review file uploaded!")
-            reviews_df['Sentiment Score'] = reviews_df['Review'].apply(lambda x: TextBlob(str(x)).sentiment.polarity)
-            reviews_df['Sentiment Label'] = reviews_df['Sentiment Score'].apply(
-                lambda x: 'Positive' if x > 0 else ('Negative' if x < 0 else 'Neutral'))
-            st.subheader("📊 Sentiment Distribution")
-            st.bar_chart(reviews_df['Sentiment Label'].value_counts())
-            st.subheader("🔍 Sample Reviews")
-            st.dataframe(reviews_df[['Review', 'Sentiment Label', 'Sentiment Score']].head(10))
-            reviews_df['Length'] = reviews_df['Review'].apply(lambda x: len(str(x).split()))
-            st.metric("Average Words per Review", round(reviews_df['Length'].mean(), 2))
-            st.subheader("☁️ Word Cloud")
-            text = ' '.join(str(r) for r in reviews_df['Review'])
-            wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
-            fig, ax = plt.subplots(figsize=(10, 5))
-            ax.imshow(wordcloud, interpolation='bilinear')
-            ax.axis("off")
-            st.pyplot(fig)
-    except Exception as e:
-        st.error(f"Review file error: {e}")
-
-# =============================
-# GOOGLE TRENDS INTEGRATION
-# =============================
-st.header("🌐 Google Trends Insights")
-pytrends = TrendReq(hl='en-US', tz=360)
-keyword = st.text_input("🔎 Enter a keyword to analyze on Google Trends", value="AI")
-if keyword:
-    try:
-        pytrends.build_payload([keyword], cat=0, timeframe='today 3-m', geo='', gprop='')
-        trends_data = pytrends.interest_over_time()
-        if not trends_data.empty:
-            st.subheader(f"📈 Interest Over Time for '{keyword}'")
-            st.line_chart(trends_data[keyword])
-            st.subheader("🔍 Related Queries")
-            related = pytrends.related_queries()
-            top_queries = related.get(keyword, {}).get('top')
-            if top_queries is not None and not top_queries.empty:
-                st.dataframe(top_queries)
-            else:
-                st.info("No related queries found.")
-        else:
-            st.warning("No data returned. Try another keyword.")
-    except Exception as e:
-        st.error(f"Failed to fetch Google Trends: {e}")
